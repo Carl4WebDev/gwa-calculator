@@ -1,35 +1,47 @@
+import { useEffect, useState } from "react";
 
 export const ShowGrades = ({subjects}) => {
   
-    let totalGrade = 0;
-    
-    const subjectTotalGrade = (subject) => {
-        const finalGradeSubject = (subject.finals * 0.40) + (subject.prefinal * 0.20) + (subject.midterm * 0.20)+ (subject.prelim * 0.20);
-        totalGrade += finalGradeSubject;
-        return finalGradeSubject.toFixed(2);
-    }
-    
-    const gwa = () => {
-        const gwaDisplay = totalGrade / subjects.length;
+    const [creditPointsCourse, setCreditPointsCourse] = useState(0)
+    const [courseGrade, setCourseGrade] = useState(0)
 
-        if(gwaDisplay){
-            return gwaDisplay.toFixed(2); 
-        }else {
-            return "calculating..."
+    useEffect(() => {
+
+        const courseGrade = (subject) => {
+            const {prelim, midterm, prefinal, finals} = subject;
+            const courseGrade =  (prelim * 0.20)+ (midterm * 0.20) + (prefinal * 0.20) + (finals * 0.40) ;   
+    
+            
+            if(courseGrade <= 97.50 || courseGrade === 100){
+                setCreditPointsCourse(1);
+                setCourseGrade(courseGrade)
+            }
+            if(courseGrade <= 94.50 || courseGrade >= 97.49){
+                setCreditPointsCourse(1.25);
+                setCourseGrade(courseGrade)
+            }
+            if(courseGrade <= 91.50 || courseGrade >= 94.49){
+                setCreditPointsCourse(1.50);
+                setCourseGrade(courseGrade)
+            }
+            return courseGrade.toFixed(2);
         }
+        const courseGradePrint = courseGrade(subjects)
+        console.log(courseGradePrint)
+    }, [creditPointsCourse])
 
-    }
+
   return (
     <div className='  p-3 '>
         <section className='grid grid-rows-2  md:grid-cols-2 '>
-                {subjects && subjects.map((subject) => {
-
+                {subjects && subjects.map((subject) => {    
                         return (
                                 <div className='grid text-center '  key={subject.subject}>
                                     <div className="grid grid-rows-6 auto-cols-auto bg-gray-50  border border-gray-300 font-bold text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 p-5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"> 
                                         
                                         <span  className="text-amber-400 bg-gray-50  border border-gray-300 font-bold text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  >
-                                            {subject.subject}
+                                            {subject.subject} <br />
+                                            Couse Unit: {subject.course_unit}
                                         </span><span  className="  bg-gray-50 border border-gray-300 font-bold text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  >
                                             prelim: {subject.prelim}
                                         </span>
@@ -43,7 +55,8 @@ export const ShowGrades = ({subjects}) => {
                                             finals: {subject.finals}
                                         </span>
                                         <span  className="text-blue-700  bg-gray-50 border border-gray-300 font-bold text-2xl rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  >
-                                            Total grade: {subjectTotalGrade(subject)}
+                                            Course Grade(CG): {courseGrade} <br />
+                                            Credit Points Course(CPC): {creditPointsCourse}
                                         </span> 
                                     </div>
                                     
@@ -57,28 +70,9 @@ export const ShowGrades = ({subjects}) => {
                 <span className=" text-amber-400 ">
                     GWA:                    
                 </span>
-                    {gwa() }
+                    {/* {gwa() } */}
             </span> 
-            {/* <span  className=" grid md:col-span-2 row-end-2  bg-gray-50 border text-left border-gray-300 font-bold text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  >
-                <span className=" text-amber-400 grid grid-cols-2">                 
-                    Grading System:
-                    97.50 -100% (1.00) Excellent <br />
-                    94.50 -97.49% (1.25) Very Good <br />
-                    91.50 -94.49% (1.50) Very Good <br />
-                    ✩88.50 -91.49% (1.75) Very Good <br />
-                    <span>
-
-                        85.50 -88.49% (2.00) Satisfactory <br />
-                        82.50 -85.49% (2.25) Satisfactory <br />
-                        79.50 -82.49% (2.50) Satisfactory <br />
-                        76.50 -79.49% (2.75) Fair <br />
-                        74.50 -76.49% (3.00) Fair <br />
-                        Below 74.49% (5.00) Failed <br />
-                        Dropped (DRP) Official Dropped <br />
-                        Incomplete (INC) Incomplete Requirements <br />                 
-                    </span>
-                </span>
-            </span>  */}
+            
         </section>
     </div>
   )
